@@ -17,6 +17,8 @@ This example demonstrates how to cancel the default dialog showing and create a 
 		 
 3.  Use the [updateTask](https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxGantt/Methods/#updateTaskkey_data) and [assignResourceToTask](https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxGantt/Methods/#assignResourceToTaskresourceKey_taskKey)/[unassignResourceFromTask](https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxGantt/Methods/#unassignResourceFromTaskresourceKey_taskKey) method to update Gantt data. 
 
+Files to look at: 
+
  [Index.cshtml](https://github.com/DevExpress-Examples/devextreme-gantt--how-to-create-a-custom-task-details-dialog/blob/20.2.3%2B/CS/DevExtremeMvcApp1/Views/Home/Index.cshtml "Index.cshtml")
 
 [SampleDataController.cs](https://github.com/DevExpress-Examples/devextreme-gantt--how-to-create-a-custom-task-details-dialog/blob/20.2.3%2B/CS/DevExtremeMvcApp1/Controllers/SampleDataController.cs "SampleDataController.cs")
