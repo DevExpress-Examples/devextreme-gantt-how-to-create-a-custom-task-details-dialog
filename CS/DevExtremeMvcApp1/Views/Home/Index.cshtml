@@ -1,0 +1,198 @@
+@using DevExtremeMvcApp1.Models
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@(Html.DevExtreme().Gantt<Task>()
+    .ID("gantt")
+    .RootValue("-1")
+    .Tasks(t => t
+        .DataSource(d => d.WebApi().Controller("SampleData").Key("Key").LoadAction("GetTasks").UpdateAction("UpdateTask").InsertAction("InsertTask").DeleteAction("DeleteTask"))
+        .KeyExpr("Key")
+        .TitleExpr("Title")
+        .ParentIdExpr("ParentKey")
+        .StartExpr("StartDate")
+        .EndExpr("EndDate")
+        .ProgressExpr("Progress")
+    )
+    .Dependencies(dep => dep
+        .DataSource(d => d.WebApi().Controller("SampleData").Key("Key").LoadAction("GetDependencies").DeleteAction("DeleteDependency").InsertAction("InsertDependency"))
+        .KeyExpr("Key")
+        .PredecessorIdExpr("PredecessorKey")
+        .SuccessorIdExpr("SuccessorKey")
+    )
+    .Resources(r => r
+        .DataSource(d => d.WebApi().Controller("SampleData").Key("Key").LoadAction("GetResources").DeleteAction("DeleteResource").InsertAction("InsertResource"))
+        .KeyExpr("Key")
+        .TextExpr("Name")
+    )
+    .ResourceAssignments(ra => ra
+        .DataSource(d => d.WebApi().Controller("SampleData").Key("Key").LoadAction("GetResourceAssignments").DeleteAction("DeleteResourceAssignment").InsertAction("InsertResourceAssignment"))
+        .KeyExpr("Key")
+        .TaskIdExpr("TaskKey")
+        .ResourceIdExpr("ResourceKey")
+    )
+    .Columns(columns => {
+        columns.AddFor(m => m.Title)
+            .Caption("Title")
+            .Width(250);
+        columns.AddFor(m => m.StartDate)
+            .Caption("Start Date").Width(100);
+        columns.AddFor(m => m.EndDate)
+            .Caption("End Date").Width(100);
+        columns.AddFor(m => m.Description)
+            .Caption("Notes").Width(200);
+    })
+    .Toolbar(t => {
+        t.Items(i => {
+            i.Add().Name(GanttToolbarItem.Undo);
+            i.Add().Name(GanttToolbarItem.Redo);
+            i.Add().Name(GanttToolbarItem.Separator);
+            i.Add().Name(GanttToolbarItem.CollapseAll);
+            i.Add().Name(GanttToolbarItem.ExpandAll);
+            i.Add().Name(GanttToolbarItem.Separator);
+            i.Add().Name(GanttToolbarItem.AddTask);
+            i.Add().Name(GanttToolbarItem.DeleteTask);
+            i.Add().Name(GanttToolbarItem.Separator);
+            i.Add().Name(GanttToolbarItem.ZoomIn);
+            i.Add().Name(GanttToolbarItem.ZoomOut);
+        });
+    })
+    .Editing(e => e.Enabled(true))
+    .ScaleType(GanttScaleType.Weeks)
+    .TaskListWidth(400)
+    .OnInitialized("onGanttInitialized")
+    .OnTaskEditDialogShowing("onTaskEditDialogShowing")
+
+)
+
+
+@(Html.DevExtreme().Popup()
+    .ID("taskDetailsPopup").MaxWidth(800).MaxHeight(500).Title("Task Details")
+    .ContentTemplate(new TemplateName("customPopupContentTemplate"))
+    .ToolbarItems(items => {
+        items.Add()
+            .Widget(editor => editor.Button()
+                .Text("Confirm")
+                .Type(ButtonType.Success)
+                .OnClick("onConfirmClick")
+            )
+            .Location(ToolbarItemLocation.After)
+            .Toolbar(Toolbar.Bottom);
+        items.Add()
+            .Widget(editor => editor.Button()
+                .Text("Cancel")
+                .Type(ButtonType.Success)
+                .OnClick("onCancelClick")
+            )
+            .Location(ToolbarItemLocation.After)
+            .Toolbar(Toolbar.Bottom);
+    })
+    .OnInitialized("onPopupInitialized").OnShown("onShown")
+)
+
+@using (Html.DevExtreme().NamedTemplate("customPopupContentTemplate")) {
+    @(Html.DevExtreme().Form()
+            .LabelLocation(FormLabelLocation.Top)
+            .ShowColonAfterLabel(true)
+            .FormData(new JS("rowData"))
+            .ColCount(2)
+        .Items(items => {
+             items.AddSimple()
+                 .DataField("Title")
+                 .ValidationRules(v => v.AddRequired()).ColSpan(2);
+             items.AddSimple()
+                 .DataField("StartDate").Editor(e => e
+                     .DateBox().OnValueChanged("StartDateValueChanged")
+                     .Width("100%")
+                 );
+             items.AddSimple()
+                 .DataField("EndDate")
+                 .Editor(e => e
+                     .DateBox().OnValueChanged("EndDateValueChanged")
+                     .Width("100%")
+                 );
+             items.AddSimple()
+                .DataField("Progress")
+                .Editor(e => e
+                    .Slider().Min(0).Max(100).Label(l => l
+                        .Visible(true)
+                        .Format(new JS("formatLabel"))
+                        .Position(VerticalEdge.Top)
+                    ).Tooltip(t => t
+                        .Enabled(true)
+                        .Format(new JS("formatLabel"))
+                        .Position(VerticalEdge.Top)
+                        .ShowMode(SliderTooltipShowMode.OnHover)
+                    )
+                    .Width("100%")
+                );
+                items.AddSimple()
+                 .DataField("Resources")
+                 .Editor(e => e
+                     .TagBox().DataSource(d => d.WebApi().Controller("SampleData").Key("Key").LoadAction("GetResources"))
+                     .Width("100%").ValueExpr("Key").DisplayExpr("Name")
+                 );
+             items.AddSimple()
+                 .DataField("Description").ColSpan(2)
+                 .Editor(e => e
+                     .TextArea()
+                     .Width("100%")
+                 );
+         })
+        .OnInitialized("onFormInitialized")
+    )
+}
+
+<script>
+    var form, popup, gantt;
+    var rowData = {};
+    function onGanttInitialized(e) {
+        gantt = e.component;
+    }
+    function onPopupInitialized(e) {
+        popup = e.component;
+    }
+    function onFormInitialized(e) {
+        form = e.component;
+    }
+    function onShown(e) {
+        var data = form.option("formData");
+        var resources = gantt.getTaskResources(data.Key);
+        form.getEditor("Resources").option("value", resources.map(r => r.Key));
+    }
+    function onTaskEditDialogShowing(e) {
+        e.cancel = true;
+        showTaskDetails(gantt.getTaskData(e.key))
+    }
+    function onConfirmClick(e) {
+        let result = form.validate();
+        if (result.isValid) {
+            var data = form.option("formData");
+            gantt.updateTask(data.Key, data);
+            currentResources = gantt.getTaskResources(data.Key).map(r => r.Key);
+            data.Resources.filter(r => !currentResources.includes(r)).forEach(r => gantt.assignResourceToTask(r, data.Key));
+            currentResources.filter(r => !data.Resources.includes(r)).forEach(r => gantt.unassignResourceFromTask(r, data.Key));
+            popup.hide();
+        }
+    }
+
+    function onCancelClick(e) {
+        popup.hide()
+    }
+    function showTaskDetails(data) {
+        popup.option("visible", true);
+        if (form)
+            form.option('formData', data);
+    }
+    function EndDateValueChanged(e) {
+        form.getEditor("StartDate").option("max", e.value);
+    }
+    function StartDateValueChanged(e) {
+        form.getEditor("EndDate").option("min", e.value);
+    }
+    function formatLabel(value) {
+        return value + "%";
+    }
+</script>
