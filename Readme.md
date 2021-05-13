@@ -23,4 +23,4 @@ Files to look at:
 
 [SampleDataController.cs](https://github.com/DevExpress-Examples/devextreme-gantt--how-to-create-a-custom-task-details-dialog/blob/20.2.3%2B/CS/DevExtremeMvcApp1/Controllers/SampleDataController.cs "SampleDataController.cs")
 
- [GanttDataProvider.cs](http://https://github.com/DevExpress-Examples/devextreme-gantt--how-to-create-a-custom-task-details-dialog/blob/20.2.3%2B/CS/DevExtremeMvcApp1/Models/GanttDataProvider.cs "GanttDataProvider.cs")
+ [GanttDataProvider.cs](https://github.com/DevExpress-Examples/devextreme-gantt--how-to-create-a-custom-task-details-dialog/blob/20.2.3%2B/CS/DevExtremeMvcApp1/Models/GanttDataProvider.cs "GanttDataProvider.cs")
