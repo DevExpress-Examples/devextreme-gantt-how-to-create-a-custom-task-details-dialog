@@ -99,48 +99,52 @@
             .FormData(new JS("rowData"))
             .ColCount(2)
         .Items(items => {
-             items.AddSimple()
-                 .DataField("Title")
-                 .ValidationRules(v => v.AddRequired()).ColSpan(2);
-             items.AddSimple()
-                 .DataField("StartDate").Editor(e => e
-                     .DateBox().OnValueChanged("StartDateValueChanged")
-                     .Width("100%")
-                 );
-             items.AddSimple()
-                 .DataField("EndDate")
-                 .Editor(e => e
-                     .DateBox().OnValueChanged("EndDateValueChanged")
-                     .Width("100%")
-                 );
-             items.AddSimple()
-                .DataField("Progress")
-                .Editor(e => e
-                    .Slider().Min(0).Max(100).Label(l => l
-                        .Visible(true)
-                        .Format(new JS("formatLabel"))
-                        .Position(VerticalEdge.Top)
-                    ).Tooltip(t => t
-                        .Enabled(true)
-                        .Format(new JS("formatLabel"))
-                        .Position(VerticalEdge.Top)
-                        .ShowMode(SliderTooltipShowMode.OnHover)
-                    )
+            items.AddSimple()
+                .DataField("Title")
+                .ValidationRules(v => v.AddRequired()).ColSpan(2);
+            items.AddSimple()
+                .DataField("StartDate").Editor(e => e
+                    .DateBox().OnValueChanged("StartDateValueChanged")
                     .Width("100%")
                 );
-                items.AddSimple()
-                 .DataField("Resources")
-                 .Editor(e => e
-                     .TagBox().DataSource(d => d.WebApi().Controller("SampleData").Key("Key").LoadAction("GetResources"))
-                     .Width("100%").ValueExpr("Key").DisplayExpr("Name")
-                 );
-             items.AddSimple()
-                 .DataField("Description").ColSpan(2)
-                 .Editor(e => e
-                     .TextArea()
-                     .Width("100%")
-                 );
-         })
+            items.AddSimple()
+                .DataField("EndDate")
+                .Editor(e => e
+                    .DateBox().OnValueChanged("EndDateValueChanged")
+                    .Width("100%")
+                );
+            items.AddSimple()
+               .DataField("Progress")
+               .Editor(e => e
+                   .Slider().Min(0).Max(100).Label(l => l
+                       .Visible(true)
+                       .Format(new JS("formatLabel"))
+                       .Position(VerticalEdge.Top)
+                   ).Tooltip(t => t
+                       .Enabled(true)
+                       .Format(new JS("formatLabel"))
+                       .Position(VerticalEdge.Top)
+                       .ShowMode(SliderTooltipShowMode.OnHover)
+                   )
+                   .Width("100%")
+               );
+            items.AddSimple()
+             .DataField("Resources")
+             .Editor(e => e
+                 .TagBox().DataSource(d => d.WebApi().Controller("SampleData").Key("Key").LoadAction("GetResources"))
+                 .Width("100%").ValueExpr("Key").DisplayExpr("Name")
+             );
+            items.AddSimple()
+                .DataField("Description").ColSpan(2)
+                .Editor(e => e
+                    .TextArea()
+                    .Width("100%")
+                );
+            items.AddButton().ColSpan(1).HorizontalAlignment(HorizontalAlignment.Left).ButtonOptions(options => {
+                options.Text("Resource Manager");
+                options.OnClick("onShowResourceManagerClick");
+            });
+        })
         .OnInitialized("onFormInitialized")
     )
 }
@@ -171,11 +175,14 @@
         if (result.isValid) {
             var data = form.option("formData");
             gantt.updateTask(data.Key, data);
-            currentResources = gantt.getTaskResources(data.Key).map(r => r.Key);
-            data.Resources.filter(r => !currentResources.includes(r)).forEach(r => gantt.assignResourceToTask(r, data.Key));
-            currentResources.filter(r => !data.Resources.includes(r)).forEach(r => gantt.unassignResourceFromTask(r, data.Key));
+            gantt.unassignAllResourcesFromTask(data.Key);
+            data.Resources.forEach(r => gantt.assignResourceToTask(r, data.Key));
             popup.hide();
         }
+    }
+
+    function onShowResourceManagerClick(e) {
+        gantt.showResourceManagerDialog();
     }
 
     function onCancelClick(e) {
