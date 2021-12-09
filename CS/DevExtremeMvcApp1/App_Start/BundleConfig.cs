@@ -14,7 +14,7 @@ namespace DevExtremeMvcApp1 {
 
             // jQuery
             scriptBundle
-                .Include("~/Scripts/jquery-3.4.1.js");
+                .Include("~/Scripts/jquery-3.6.0.js");
 
             // Bootstrap
             scriptBundle

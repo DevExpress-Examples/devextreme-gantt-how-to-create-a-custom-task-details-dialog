@@ -1,26 +1,24 @@
 /*!
 * DevExtreme (dx.messages.de.js)
-* Version: 20.2.3 (build 20309-0313)
-* Build date: Wed Nov 04 2020
+* Version: 21.2.3
+* Build date: Thu Oct 28 2021
 *
-* Copyright (c) 2012 - 2020 Developer Express Inc. ALL RIGHTS RESERVED
+* Copyright (c) 2012 - 2021 Developer Express Inc. ALL RIGHTS RESERVED
 * Read about DevExtreme licensing here: https://js.devexpress.com/Licensing/
 */
 "use strict";
 
 ! function(root, factory) {
     if ("function" === typeof define && define.amd) {
-        define(function(require) {
+        define((function(require) {
             factory(require("devextreme/localization"))
-        })
+        }))
+    } else if ("object" === typeof module && module.exports) {
+        factory(require("devextreme/localization"))
     } else {
-        if ("object" === typeof module && module.exports) {
-            factory(require("devextreme/localization"))
-        } else {
-            factory(DevExpress.localization)
-        }
+        factory(DevExpress.localization)
     }
-}(this, function(localization) {
+}(0, (function(localization) {
     localization.loadMessages({
         de: {
             Yes: "Ja",
@@ -157,6 +155,8 @@
             "dxDataGrid-headerFilterEmptyValue": "(Leerwerte)",
             "dxDataGrid-headerFilterOK": "OK",
             "dxDataGrid-headerFilterCancel": "Abbrechen",
+            "dxDataGrid-ariaAdaptiveCollapse": "Zus\xe4tzliche Spalten verstecken",
+            "dxDataGrid-ariaAdaptiveExpand": "Zus\xe4tzliche Spalten anzeigen",
             "dxDataGrid-ariaColumn": "Spalte",
             "dxDataGrid-ariaValue": "Wert",
             "dxDataGrid-ariaFilterCell": "Filterzelle",
@@ -166,11 +166,14 @@
             "dxDataGrid-ariaSearchInGrid": "Suchen in der Datentabelle",
             "dxDataGrid-ariaSelectAll": "Alle ausw\xe4hlen",
             "dxDataGrid-ariaSelectRow": "Zeile ausw\xe4hlen",
+            "dxDataGrid-ariaToolbar": "Symbolleiste der Datentabelle",
             "dxDataGrid-filterBuilderPopupTitle": "Filter-Generator",
             "dxDataGrid-filterPanelCreateFilter": "Filter erzeugen",
             "dxDataGrid-filterPanelClearFilter": "Zur\xfccksetzen",
             "dxDataGrid-filterPanelFilterEnabledHint": "Filter aktivieren",
             "dxTreeList-ariaTreeList": "Strukturliste",
+            "dxTreeList-ariaSearchInGrid": "Suchen in der Strukturliste",
+            "dxTreeList-ariaToolbar": "Symbolleiste der Strukturliste",
             "dxTreeList-editingAddRowToNode": "Hinzuf\xfcgen",
             "dxPager-infoText": "Seite {0} von {1} ({2} Elemente)",
             "dxPager-pagesCountText": "von",
@@ -289,6 +292,68 @@
             "dxHtmlEditor-dialogInsertTableCaption": "Tabelle einf\xfcgen",
             "dxHtmlEditor-heading": "\xdcberschrift",
             "dxHtmlEditor-normalText": "Normaler Text",
+            "dxHtmlEditor-background": "Hintergrundfarbe",
+            "dxHtmlEditor-bold": "Fett",
+            "dxHtmlEditor-color": "Schriftfarbe",
+            "dxHtmlEditor-font": "Schriftart",
+            "dxHtmlEditor-italic": "Kursiv",
+            "dxHtmlEditor-link": "Link hinzuf\xfcgen",
+            "dxHtmlEditor-image": "Bild hinzuf\xfcgen",
+            "dxHtmlEditor-size": "Schriftgr\xf6\xdfe",
+            "dxHtmlEditor-strike": "Durchgestrichen",
+            "dxHtmlEditor-subscript": "Tiefgestellt",
+            "dxHtmlEditor-superscript": "Hochgestellt",
+            "dxHtmlEditor-underline": "Unterstrichen",
+            "dxHtmlEditor-blockquote": "Blockzitat",
+            "dxHtmlEditor-header": "Kopfzeile",
+            "dxHtmlEditor-increaseIndent": "Einzug vergr\xf6\xdfern",
+            "dxHtmlEditor-decreaseIndent": "Einzug verkleinern",
+            "dxHtmlEditor-orderedList": "Sortierte Liste",
+            "dxHtmlEditor-bulletList": "Aufz\xe4hlung",
+            "dxHtmlEditor-alignLeft": "Linksb\xfcndig",
+            "dxHtmlEditor-alignCenter": "Zentriert",
+            "dxHtmlEditor-alignRight": "Rechtsb\xfcndig",
+            "dxHtmlEditor-alignJustify": "Blocksatz",
+            "dxHtmlEditor-codeBlock": "Codeblock",
+            "dxHtmlEditor-variable": "Variable hinzuf\xfcgen",
+            "dxHtmlEditor-undo": "R\xfcckg\xe4ngig",
+            "dxHtmlEditor-redo": "Wiederholen",
+            "dxHtmlEditor-clear": "Formate l\xf6schen",
+            "dxHtmlEditor-insertTable": "Tabelle einf\xfcgen",
+            "dxHtmlEditor-insertHeaderRow": "Kopfzeile einf\xfcgen",
+            "dxHtmlEditor-insertRowAbove": "Spalte oberhalb einf\xfcgen",
+            "dxHtmlEditor-insertRowBelow": "Spalte unterhalb einf\xfcgen",
+            "dxHtmlEditor-insertColumnLeft": "Spalte links einf\xfcgen",
+            "dxHtmlEditor-insertColumnRight": "Spalte rechts einf\xfcgen",
+            "dxHtmlEditor-deleteColumn": "Spalte l\xf6schen",
+            "dxHtmlEditor-deleteRow": "Zeile l\xf6schen",
+            "dxHtmlEditor-deleteTable": "Tabelle l\xf6schen",
+            "dxHtmlEditor-cellProperties": "Zelleneigenschaften",
+            "dxHtmlEditor-tableProperties": "Tabelleneigenschaften",
+            "dxHtmlEditor-insert": "Einf\xfcgen",
+            "dxHtmlEditor-delete": "L\xf6schen",
+            "dxHtmlEditor-border": "Rahmen",
+            "dxHtmlEditor-style": "Stil",
+            "dxHtmlEditor-width": "Breite",
+            "dxHtmlEditor-height": "H\xf6he",
+            "dxHtmlEditor-borderColor": "Farbe",
+            "dxHtmlEditor-tableBackground": "Hintergrund",
+            "dxHtmlEditor-dimensions": "Abmessungen",
+            "dxHtmlEditor-alignment": "Ausrichtung",
+            "dxHtmlEditor-horizontal": "Horizontal",
+            "dxHtmlEditor-vertical": "Vertikal",
+            "dxHtmlEditor-paddingVertical": "Vertikaler Abstand",
+            "dxHtmlEditor-paddingHorizontal": "Horizontaler Abstand",
+            "dxHtmlEditor-pixels": "Pixel",
+            "dxHtmlEditor-list": "Liste",
+            "dxHtmlEditor-ordered": "Sortiert",
+            "dxHtmlEditor-bullet": "Aufz\xe4hlung",
+            "dxHtmlEditor-align": "Ausrichten",
+            "dxHtmlEditor-center": "Zentrieren",
+            "dxHtmlEditor-left": "Links",
+            "dxHtmlEditor-right": "Rechts",
+            "dxHtmlEditor-indent": "Einzug",
+            "dxHtmlEditor-justify": "Blocksatz",
             "dxFileManager-newDirectoryName": "Ohne Titel",
             "dxFileManager-rootDirectoryName": "Dateien",
             "dxFileManager-errorNoAccess": "Zugriff verweigert. Die Operation kann nicht durchgef\xfchrt werden.",
@@ -534,7 +599,15 @@
             "dxGantt-deleteSelectedTask": "Ausgew\xe4hlte Aufgabe l\xf6schen",
             "dxGantt-zoomIn": "Vergr\xf6\xdfern",
             "dxGantt-zoomOut": "Verkleinern",
-            "dxGantt-fullScreen": "Vollbildmodus"
+            "dxGantt-fullScreen": "Vollbildmodus",
+            "dxGantt-quarter": "Q{0}",
+            "dxGantt-sortingAscendingText": "Aufsteigend sortieren",
+            "dxGantt-sortingDescendingText": "Absteigend sortieren",
+            "dxGantt-sortingClearText": "Sortierung aufheben",
+            "dxGantt-showResources": "Ressourcen Anzeigen",
+            "dxGantt-showDependencies": "Abh\xe4ngigkeiten Anzeigen",
+            "dxGantt-dialogStartDateValidation": "Startdatum muss sp\xe4ter sein als {0}",
+            "dxGantt-dialogEndDateValidation": "Enddatum muss sp\xe4ter sein als {0}"
         }
     })
-});
+}));

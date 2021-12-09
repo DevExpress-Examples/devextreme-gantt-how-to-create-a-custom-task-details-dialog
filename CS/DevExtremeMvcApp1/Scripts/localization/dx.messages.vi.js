@@ -1,26 +1,24 @@
 /*!
 * DevExtreme (dx.messages.vi.js)
-* Version: 20.2.3 (build 20309-0313)
-* Build date: Wed Nov 04 2020
+* Version: 21.2.3
+* Build date: Thu Oct 28 2021
 *
-* Copyright (c) 2012 - 2020 Developer Express Inc. ALL RIGHTS RESERVED
+* Copyright (c) 2012 - 2021 Developer Express Inc. ALL RIGHTS RESERVED
 * Read about DevExtreme licensing here: https://js.devexpress.com/Licensing/
 */
 "use strict";
 
 ! function(root, factory) {
     if ("function" === typeof define && define.amd) {
-        define(function(require) {
+        define((function(require) {
             factory(require("devextreme/localization"))
-        })
+        }))
+    } else if ("object" === typeof module && module.exports) {
+        factory(require("devextreme/localization"))
     } else {
-        if ("object" === typeof module && module.exports) {
-            factory(require("devextreme/localization"))
-        } else {
-            factory(DevExpress.localization)
-        }
+        factory(DevExpress.localization)
     }
-}(this, function(localization) {
+}(0, (function(localization) {
     localization.loadMessages({
         vi: {
             Yes: "C\xf3",
@@ -289,6 +287,68 @@
             "dxHtmlEditor-dialogInsertTableCaption": "!TODO",
             "dxHtmlEditor-heading": "Ti\xeau \u0111\u1ec1",
             "dxHtmlEditor-normalText": "Ch\u1eef b\xecnh th\u01b0\u1eddng",
+            "dxHtmlEditor-background": "TODO",
+            "dxHtmlEditor-bold": "TODO",
+            "dxHtmlEditor-color": "TODO",
+            "dxHtmlEditor-font": "TODO",
+            "dxHtmlEditor-italic": "TODO",
+            "dxHtmlEditor-link": "TODO",
+            "dxHtmlEditor-image": "TODO",
+            "dxHtmlEditor-size": "TODO",
+            "dxHtmlEditor-strike": "TODO",
+            "dxHtmlEditor-subscript": "TODO",
+            "dxHtmlEditor-superscript": "TODO",
+            "dxHtmlEditor-underline": "TODO",
+            "dxHtmlEditor-blockquote": "TODO",
+            "dxHtmlEditor-header": "TODO",
+            "dxHtmlEditor-increaseIndent": "TODO",
+            "dxHtmlEditor-decreaseIndent": "TODO",
+            "dxHtmlEditor-orderedList": "TODO",
+            "dxHtmlEditor-bulletList": "TODO",
+            "dxHtmlEditor-alignLeft": "TODO",
+            "dxHtmlEditor-alignCenter": "TODO",
+            "dxHtmlEditor-alignRight": "TODO",
+            "dxHtmlEditor-alignJustify": "TODO",
+            "dxHtmlEditor-codeBlock": "TODO",
+            "dxHtmlEditor-variable": "TODO",
+            "dxHtmlEditor-undo": "TODO",
+            "dxHtmlEditor-redo": "TODO",
+            "dxHtmlEditor-clear": "TODO",
+            "dxHtmlEditor-insertTable": "TODO",
+            "dxHtmlEditor-insertHeaderRow": "TODO",
+            "dxHtmlEditor-insertRowAbove": "TODO",
+            "dxHtmlEditor-insertRowBelow": "TODO",
+            "dxHtmlEditor-insertColumnLeft": "TODO",
+            "dxHtmlEditor-insertColumnRight": "TODO",
+            "dxHtmlEditor-deleteColumn": "TODO",
+            "dxHtmlEditor-deleteRow": "TODO",
+            "dxHtmlEditor-deleteTable": "TODO",
+            "dxHtmlEditor-cellProperties": "TODO",
+            "dxHtmlEditor-tableProperties": "TODO",
+            "dxHtmlEditor-insert": "TODO",
+            "dxHtmlEditor-delete": "TODO",
+            "dxHtmlEditor-border": "TODO",
+            "dxHtmlEditor-style": "TODO",
+            "dxHtmlEditor-width": "TODO",
+            "dxHtmlEditor-height": "TODO",
+            "dxHtmlEditor-borderColor": "TODO",
+            "dxHtmlEditor-tableBackground": "TODO",
+            "dxHtmlEditor-dimensions": "TODO",
+            "dxHtmlEditor-alignment": "TODO",
+            "dxHtmlEditor-horizontal": "TODO",
+            "dxHtmlEditor-vertical": "TODO",
+            "dxHtmlEditor-paddingVertical": "TODO",
+            "dxHtmlEditor-paddingHorizontal": "TODO",
+            "dxHtmlEditor-pixels": "TODO",
+            "dxHtmlEditor-list": "TODO",
+            "dxHtmlEditor-ordered": "TODO",
+            "dxHtmlEditor-bullet": "TODO",
+            "dxHtmlEditor-align": "TODO",
+            "dxHtmlEditor-center": "TODO",
+            "dxHtmlEditor-left": "TODO",
+            "dxHtmlEditor-right": "TODO",
+            "dxHtmlEditor-indent": "TODO",
+            "dxHtmlEditor-justify": "TODO",
             "dxFileManager-newDirectoryName": "Th\u01b0 m\u1ee5c kh\xf4ng t\xean",
             "dxFileManager-rootDirectoryName": "C\xe1c t\u1eadp tin",
             "dxFileManager-errorNoAccess": "T\u1eeb ch\u1ed1i truy c\u1eadp. Thao t\xe1c kh\xf4ng th\u1ec3 ho\xe0n t\u1ea5t.",
@@ -465,7 +525,15 @@
             "dxGantt-deleteSelectedTask": "TODO",
             "dxGantt-zoomIn": "TODO",
             "dxGantt-zoomOut": "TODO",
-            "dxGantt-fullScreen": "TODO"
+            "dxGantt-fullScreen": "TODO",
+            "dxGantt-quarter": "TODO",
+            "dxGantt-sortingAscendingText": "S\u1eafp x\u1ebfp T\u0103ng d\u1ea7n",
+            "dxGantt-sortingDescendingText": "S\u1eafp x\u1ebfp Gi\u1ea3m d\u1ea7n",
+            "dxGantt-sortingClearText": "Lo\u1ea1i b\u1ecf vi\u1ec7c s\u1eafp x\u1ebfp",
+            "dxGantt-showResources": "TODO",
+            "dxGantt-showDependencies": "TODO",
+            "dxGantt-dialogStartDateValidation": "TODO",
+            "dxGantt-dialogEndDateValidation": "TODO"
         }
     })
-});
+}));
