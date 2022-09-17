@@ -45,10 +45,10 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExtreme.AspNet.Data, Version=2.8.6.0, Culture=neutral, PublicKeyToken=982f5dab1439d0f7, processorArchitecture=MSIL">
+    <Reference Include="DevExtreme.AspNet.Data">
       <HintPath>..\packages\DevExtreme.AspNet.Data.2.8.6\lib\net452\DevExtreme.AspNet.Data.dll</HintPath>
     </Reference>
-    <Reference Include="DevExtreme.AspNet.Mvc, Version=21.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+    <Reference Include="DevExtreme.AspNet.Mvc">
       <HintPath>..\packages\DevExtreme.AspNet.Mvc.21.2.4\lib\net452\DevExtreme.AspNet.Mvc.dll</HintPath>
       <HintPath>..\packages\DevExtreme.AspNet.Mvc.21.2.10\lib\net452\DevExtreme.AspNet.Mvc.dll</HintPath>
     </Reference>
