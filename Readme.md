@@ -10,7 +10,7 @@ This example demonstrates how display a custom "Task details" dialog instead of 
 
 ## Implementation Details
 
-1. Add a popup edit form.
+1. Add a popup edit form in your application.
    
 	```csharp
 	@(Html.DevExtreme().Popup()
@@ -43,7 +43,7 @@ This example demonstrates how display a custom "Task details" dialog instead of 
     }
  	```
 
-2. Handle the [taskEditDialogShowing](https://js.devexpress.com/jQuery/Documentation/ApiReference/UI_Components/dxGantt/Events/#taskEditDialogShowing) event to prevent the default dialog and display your custom dialog. Bind the form in the popup to the processed task data.
+2. Handle the [taskEditDialogShowing](https://js.devexpress.com/jQuery/Documentation/ApiReference/UI_Components/dxGantt/Events/#taskEditDialogShowing) event to prevent the default dialog and display your custom dialog instead. Bind the form in the popup control to the processed task data.
 
 	```jscript
     function onTaskEditDialogShowing(e) {
