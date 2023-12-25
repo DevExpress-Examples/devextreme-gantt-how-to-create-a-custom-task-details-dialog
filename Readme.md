@@ -42,7 +42,7 @@ This example demonstrates how display a custom "Task details" dialog instead of 
     }
  	```
 
-2. Handle the [taskEditDialogShowing](https://js.devexpress.com/jQuery/Documentation/ApiReference/UI_Components/dxGantt/Events/#taskEditDialogShowing) event to prevent the default dialog and display your custom dialog instead. Bind the form in the popup control to the processed task data.
+2. Handle the [taskEditDialogShowing](https://js.devexpress.com/jQuery/Documentation/ApiReference/UI_Components/dxGantt/Events/#taskEditDialogShowing) event to prevent the default dialog and display your custom dialog instead. Bind the form in the popup control to processed task data.
 
 	```jscript
     function onTaskEditDialogShowing(e) {
