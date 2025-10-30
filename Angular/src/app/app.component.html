@@ -1,0 +1,186 @@
+<div class="demo-container">
+  <dx-gantt
+    [tasks]="tasks"
+    [dependencies]="dependencies"
+    [resources]="resources"
+    [resourceAssignments]="resourceAssignments"
+    [scaleType]="'weeks'"
+    [taskListWidth]="400"
+    (onTaskEditDialogShowing)="onTaskEditDialogShowing($event)"
+  >
+    <dxo-tasks
+      [dataSource]="tasks"
+      keyExpr="id"
+      parentIdExpr="parentId"
+      titleExpr="title"
+      startExpr="start"
+      endExpr="end"
+      progressExpr="progress"
+    >
+    </dxo-tasks>
+
+    <dxo-dependencies
+      [dataSource]="dependencies"
+      keyExpr="id"
+      predecessorIdExpr="predecessorId"
+      successorIdExpr="successorId"
+      typeExpr="type"
+    >
+    </dxo-dependencies>
+
+    <dxo-resources
+      [dataSource]="resources"
+      keyExpr="id"
+      textExpr="text"
+    >
+    </dxo-resources>
+
+    <dxo-resource-assignments
+      [dataSource]="resourceAssignments"
+      keyExpr="id"
+      taskIdExpr="taskId"
+      resourceIdExpr="resourceId"
+    >
+    </dxo-resource-assignments>
+
+    <dxi-column dataField="title" caption="Title" [width]="250"></dxi-column>
+    <dxi-column dataField="start" caption="Start Date" [width]="100"></dxi-column>
+    <dxi-column dataField="end" caption="End Date" [width]="100"></dxi-column>
+
+    <dxo-toolbar>
+      <dxi-item name="undo"></dxi-item>
+      <dxi-item name="redo"></dxi-item>
+      <dxi-item name="separator"></dxi-item>
+      <dxi-item name="collapseAll"></dxi-item>
+      <dxi-item name="expandAll"></dxi-item>
+      <dxi-item name="separator"></dxi-item>
+      <dxi-item name="addTask"></dxi-item>
+      <dxi-item name="deleteTask"></dxi-item>
+      <dxi-item name="separator"></dxi-item>
+      <dxi-item name="zoomIn"></dxi-item>
+      <dxi-item name="zoomOut"></dxi-item>
+    </dxo-toolbar>
+
+    <dxo-editing [enabled]="true"></dxo-editing>
+  </dx-gantt>
+
+  <dx-popup
+    #taskDetailsPopup
+    [maxWidth]="800"
+    [maxHeight]="500"
+    title="Task Details"
+    [(visible)]="popupVisible"
+    (onShown)="onPopupShown()"
+  >
+    <dxo-toolbar-item
+      widget="dxButton"
+      location="after"
+      toolbar="bottom"
+      [options]="{
+        text: 'Confirm',
+        type: 'success',
+        onClick: onConfirmClick.bind(this)
+      }"
+    >
+    </dxo-toolbar-item>
+    <dxo-toolbar-item
+      widget="dxButton"
+      location="after"
+      toolbar="bottom"
+      [options]="{
+        text: 'Cancel',
+        onClick: onCancelClick.bind(this)
+      }"
+    >
+    </dxo-toolbar-item>
+
+    <div *dxTemplate="let data of 'content'">
+      <dx-form
+        #taskForm
+        [formData]="currentTaskData"
+        labelLocation="top"
+        [showColonAfterLabel]="true"
+        [colCount]="2"
+      >
+        <dxi-item
+          dataField="title"
+          [label]="{ text: 'Title' }"
+          [colSpan]="2"
+        >
+          <dxi-validation-rule type="required"></dxi-validation-rule>
+        </dxi-item>
+
+        <dxi-item
+          dataField="start"
+          [label]="{ text: 'Start Date' }"
+          editorType="dxDateBox"
+          [editorOptions]="{
+            width: '100%',
+            type: 'datetime',
+            onValueChanged: onStartDateChanged.bind(this)
+          }"
+        >
+        </dxi-item>
+
+        <dxi-item
+          dataField="end"
+          [label]="{ text: 'End Date' }"
+          editorType="dxDateBox"
+          [editorOptions]="{
+            width: '100%',
+            type: 'datetime',
+            onValueChanged: onEndDateChanged.bind(this)
+          }"
+        >
+        </dxi-item>
+
+        <dxi-item
+          dataField="progress"
+          [label]="{ text: 'Progress' }"
+          editorType="dxSlider"
+          [editorOptions]="{
+            min: 0,
+            max: 100,
+            width: '100%',
+            label: {
+              visible: true,
+              position: 'top',
+              format: formatLabel
+            },
+            tooltip: {
+              enabled: true,
+              position: 'top',
+              showMode: 'onHover',
+              format: formatLabel
+            }
+          }"
+        >
+        </dxi-item>
+
+        <dxi-item
+          dataField="resources"
+          [label]="{ text: 'Resources' }"
+          editorType="dxTagBox"
+          [editorOptions]="{
+            dataSource: resources,
+            width: '100%',
+            valueExpr: 'id',
+            displayExpr: 'text'
+          }"
+        >
+        </dxi-item>
+
+        <dxi-item
+          itemType="button"
+          [colSpan]="1"
+          horizontalAlignment="left"
+          [buttonOptions]="{
+            text: 'Resource Manager',
+            onClick: onShowResourceManagerClick.bind(this)
+          }"
+        >
+        </dxi-item>
+      </dx-form>
+    </div>
+  </dx-popup>
+</div>

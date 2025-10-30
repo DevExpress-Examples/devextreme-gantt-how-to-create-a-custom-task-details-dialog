@@ -1,0 +1,231 @@
+@using ASP_NET_Core.Models
+@using System.Text.Json
+
+@{
+    var tasksJson = JsonSerializer.Serialize(GanttData.Tasks);
+    var resourcesJson = JsonSerializer.Serialize(GanttData.Resources);
+}
+
+<h2>Gantt - Custom Task Details Dialog</h2>
+
+@(Html.DevExtreme().Gantt()
+    .ID("gantt")
+    .Height(700)
+    .Tasks(t => t
+        .DataSource(GanttData.Tasks)
+        .KeyExpr("Id")
+        .ParentIdExpr("ParentId")
+        .TitleExpr("Title")
+        .StartExpr("Start")
+        .EndExpr("End")
+        .ProgressExpr("Progress")
+    )
+    .Dependencies(d => d
+        .DataSource(GanttData.Dependencies)
+        .KeyExpr("Id")
+        .PredecessorIdExpr("PredecessorId")
+        .SuccessorIdExpr("SuccessorId")
+        .TypeExpr("Type")
+    )
+    .Resources(r => r
+        .DataSource(GanttData.Resources)
+        .KeyExpr("Id")
+        .TextExpr("Text")
+    )
+    .ResourceAssignments(ra => ra
+        .DataSource(GanttData.ResourceAssignments)
+        .KeyExpr("Id")
+        .TaskIdExpr("TaskId")
+        .ResourceIdExpr("ResourceId")
+    )
+    .Columns(columns => {
+        columns.Add()
+            .DataField("Title")
+            .Caption("Subject")
+            .Width(300);
+        columns.Add()
+            .DataField("Start")
+            .Caption("Start Date");
+        columns.Add()
+            .DataField("End")
+            .Caption("End Date");
+    })
+    .Editing(e => e.Enabled(true))
+    .OnTaskEditDialogShowing("onTaskEditDialogShowing")
+)
+
+@(Html.DevExtreme().Popup()
+    .ID("taskDetailsPopup")
+    .Width(400)
+    .Height(450)
+    .Title("Task Details")
+    .ShowTitle(true)
+    .DragEnabled(false)
+    .Visible(false)
+    .Container("body")
+    .ContentTemplate(@<text>
+        @(Html.DevExtreme().Form()
+            .ID("taskForm")
+            .Items(items => {
+                items.AddSimple()
+                    .DataField("Title")
+                    .Label(l => l.Text("Title"))
+                    .ValidationRules(v => v.AddRequired().Message("Title is required"));
+                items.AddSimple()
+                    .DataField("Start")
+                    .Label(l => l.Text("Start Date"))
+                    .Editor(e => e.DateBox()
+                        .Type(DateBoxType.DateTime)
+                        .OnValueChanged("onStartDateChanged")
+                    );
+                items.AddSimple()
+                    .DataField("End")
+                    .Label(l => l.Text("End Date"))
+                    .Editor(e => e.DateBox()
+                        .Type(DateBoxType.DateTime)
+                        .OnValueChanged("onEndDateChanged")
+                    );
+                items.AddSimple()
+                    .DataField("Progress")
+                    .Label(l => l.Text("Progress"))
+                    .Editor(e => e.Slider()
+                        .Min(0)
+                        .Max(100)
+                        .Tooltip(t => t
+                            .Enabled(true)
+                            .Format(new JS("formatProgress"))
+                            .ShowMode(SliderTooltipShowMode.Always)
+                            .Position(VerticalEdge.Bottom)
+                        )
+                    );
+                items.AddSimple()
+                    .DataField("resourceIds")
+                    .Label(l => l.Text("Resources"))
+                    .Editor(e => e.TagBox()
+                        .DataSource(new JS("resources"))
+                        .DisplayExpr("Text")
+                        .ValueExpr("Id")
+                        .ShowSelectionControls(true)
+                        .ApplyValueMode(EditorApplyValueMode.UseButtons)
+                    );
+            })
+        )
+        <div class="popup-buttons">
+            <button class="btn btn-primary" onclick="onConfirmClick()">OK</button>
+            <button class="btn btn-secondary" onclick="onCancelClick()">Cancel</button>
+        </div>
+    </text>)
+)
+
+<script>
+    const resources = @Html.Raw(resourcesJson);
+    let ganttInstance;
+    let popupInstance;
+    let formInstance;
+
+    function onTaskEditDialogShowing(e) {
+        console.log('onTaskEditDialogShowing called', e);
+        e.cancel = true;
+        console.log('After setting cancel:', e.cancel);
+
+        if (!ganttInstance) {
+            ganttInstance = $('#gantt').dxGantt('instance');
+        }
+        if (!popupInstance) {
+            popupInstance = $('#taskDetailsPopup').dxPopup('instance');
+        }
+
+        console.log('Popup instance:', popupInstance);
+
+        const taskData = ganttInstance.getTaskData(e.key);
+        if (!taskData) {
+            return;
+        }
+
+        const taskResources = ganttInstance.getTaskResources(e.key);
+        const resourceIds = taskResources.map(r => r.id);
+
+        console.log('Showing popup with data:', taskData);
+
+        // Show popup first so the form gets rendered
+        popupInstance.show();
+
+        // Now get the form instance after popup is shown
+        formInstance = $('#taskForm').dxForm('instance');
+
+        console.log('Form instance:', formInstance);
+
+        formInstance.option('formData', {
+            ...taskData,
+            resourceIds: resourceIds
+        });
+    }
+
+    function onStartDateChanged(e) {
+        if (!formInstance) {
+            formInstance = $('#taskForm').dxForm('instance');
+        }
+        const startDate = e.value;
+        const endDate = formInstance.option('formData').End;
+        if (startDate && endDate && startDate > endDate) {
+            formInstance.getEditor('End').option('value', startDate);
+        }
+    }
+
+    function onEndDateChanged(e) {
+        if (!formInstance) {
+            formInstance = $('#taskForm').dxForm('instance');
+        }
+        const endDate = e.value;
+        const startDate = formInstance.option('formData').Start;
+        if (startDate && endDate && endDate < startDate) {
+            formInstance.getEditor('Start').option('value', endDate);
+        }
+    }
+
+    function formatProgress(value) {
+        return value + '%';
+    }
+
+    function onConfirmClick() {
+        if (!formInstance) {
+            formInstance = $('#taskForm').dxForm('instance');
+        }
+        if (!ganttInstance) {
+            ganttInstance = $('#gantt').dxGantt('instance');
+        }
+        if (!popupInstance) {
+            popupInstance = $('#taskDetailsPopup').dxPopup('instance');
+        }
+
+        const result = formInstance.validate();
+        if (!result.isValid) {
+            return;
+        }
+
+        const data = formInstance.option('formData');
+        ganttInstance.updateTask(data.Id, data);
+
+        const currentResourceIds = ganttInstance.getTaskResources(data.Id).map(r => r.id);
+        const newResourceIds = data.resourceIds || [];
+
+        const resourcesToRemove = currentResourceIds.filter(id => !newResourceIds.includes(id));
+        resourcesToRemove.forEach(resourceId => {
+            ganttInstance.unassignResourceFromTask(resourceId, data.Id);
+        });
+
+        const resourcesToAdd = newResourceIds.filter(id => !currentResourceIds.includes(id));
+        resourcesToAdd.forEach(resourceId => {
+            ganttInstance.assignResourceToTask(resourceId, data.Id);
+        });
+
+        popupInstance.hide();
+    }
+
+    function onCancelClick() {
+        if (!popupInstance) {
+            popupInstance = $('#taskDetailsPopup').dxPopup('instance');
+        }
+        popupInstance.hide();
+    }
+</script>

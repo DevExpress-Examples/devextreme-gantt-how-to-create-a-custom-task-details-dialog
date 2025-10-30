@@ -1,0 +1,69 @@
+name: Check Unused Images
+
+on:
+  push:
+    paths:
+      - '**/*.md'
+      - '*.png'
+      - '*.jpg'
+      - '*.jpeg'
+      - '*.svg'
+      - '*.gif'
+      - 'images/**'
+  pull_request:
+
+jobs:
+  check-unused-images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check for unused images
+        run: |
+          unused=()
+
+          # Find all images in the root and `images/` directory (if it exists)
+          images=$(find . -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.svg" -o -iname "*.gif" \) -printf "%P\n")
+          if [ -d "./images" ]; then
+            images+=" $(find ./images -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.svg" -o -iname "*.gif" \) -printf "%P\n")"
+          fi
+
+          # Loop through each image to check if it's referenced in any README files
+          for img in $images; do
+            found=false
+            while IFS= read -r -d '' readme_file; do
+              if grep -q "!\[.*\](.*$img.*)" "$readme_file"; then
+                found=true
+                break
+              fi
+            done < <(find . -iname "readme.md" -print0)
+            
+            if [ "$found" = false ]; then
+              unused+=("$img")
+            fi
+          done
+
+          # Check if there are any unused images
+          if [ ${#unused[@]} -gt 0 ]; then
+            echo "❌ Unused images found that are not referenced in any README files:"
+            echo "## Unused Images" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Image Name | Path |" >> $GITHUB_STEP_SUMMARY
+            echo "|------------|------|" >> $GITHUB_STEP_SUMMARY
+            
+            for img in "${unused[@]}"; do
+              if [[ -f "./$img" ]]; then
+                path="./$img"
+              else
+                path="./images/$img"
+              fi
+              name=$(basename "$img")
+              echo "$name -> $path"
+              
+              echo "| $name | $path |" >> $GITHUB_STEP_SUMMARY
+            done
+
+            exit 1
+          else
+            echo "✅ No unused images found that are not referenced in README files!"
+          fi

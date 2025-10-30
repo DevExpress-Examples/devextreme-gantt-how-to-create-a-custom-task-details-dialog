@@ -303,3 +303,7 @@ TesterMetadata.xml
 
 # Backup files
 *.bak
+
+*/wwwroot/*
+!*/wwwroot/css/Site.css
+*.DS_Store
