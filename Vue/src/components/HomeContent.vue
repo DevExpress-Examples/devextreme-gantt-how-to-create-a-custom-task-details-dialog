@@ -19,9 +19,6 @@ import DxGantt, {
 } from 'devextreme-vue/gantt';
 import DxPopup from 'devextreme-vue/popup';
 import { DxForm } from 'devextreme-vue/form';
-import type Gantt from 'devextreme/ui/gantt';
-import type Popup from 'devextreme/ui/popup';
-import type Form from 'devextreme/ui/form';
 import type { SimpleItem } from 'devextreme/ui/form';
 
 import { tasks, dependencies, resources, resourceAssignments } from '../data';
@@ -39,6 +36,7 @@ const formItems: SimpleItem[] = [
   {
     dataField: 'title',
     label: { text: 'Title' },
+    colSpan: 2,
     validationRules: [{ type: 'required', message: 'Title is required' }],
   },
   {
@@ -47,6 +45,7 @@ const formItems: SimpleItem[] = [
     label: { text: 'Start Date' },
     editorOptions: {
       type: 'datetime',
+      width: '100%',
       onValueChanged: (e: any) => {
         const startDate = e.value;
         const formInstance = formRef.value?.instance;
@@ -63,6 +62,7 @@ const formItems: SimpleItem[] = [
     label: { text: 'End Date' },
     editorOptions: {
       type: 'datetime',
+      width: '100%',
       onValueChanged: (e: any) => {
         const endDate = e.value;
         const formInstance = formRef.value?.instance;
@@ -80,11 +80,17 @@ const formItems: SimpleItem[] = [
     editorOptions: {
       min: 0,
       max: 100,
+      width: '100%',
+      label: {
+        visible: true,
+        position: 'top',
+        format: (value: number) => `${value}%`,
+      },
       tooltip: {
         enabled: true,
+        position: 'top',
+        showMode: 'onHover',
         format: (value: number) => `${value}%`,
-        showMode: 'always',
-        position: 'bottom',
       },
     },
   },
@@ -93,31 +99,54 @@ const formItems: SimpleItem[] = [
     editorType: 'dxTagBox' as any,
     label: { text: 'Resources' },
     editorOptions: {
-      items: resources,
+      dataSource: resources,
+      width: '100%',
       displayExpr: 'text',
       valueExpr: 'id',
-      showSelectionControls: true,
-      applyValueMode: 'useButtons',
     },
   },
+  {
+    itemType: 'button',
+    colSpan: 1,
+    horizontalAlignment: 'left',
+    buttonOptions: {
+      text: 'Resource Manager',
+      onClick: () => {
+        const ganttInstance = ganttRef.value?.instance;
+        ganttInstance?.showResourceManagerDialog();
+      },
+    },
+  } as any,
 ];
 
 function onTaskEditDialogShowing(e: any) {
   e.cancel = true;
+
   const ganttInstance = ganttRef.value?.instance;
-  const taskData = ganttInstance?.getTaskData(e.key);
+  if (!ganttInstance) {
+    return;
+  }
+
+  const taskData = ganttInstance.getTaskData(e.key);
   if (!taskData) {
     return;
   }
 
-  const taskResources = ganttInstance?.getTaskResources(e.key);
+  const taskResources = ganttInstance.getTaskResources(e.key);
   const resourceIds = taskResources?.map((r: any) => r.id) || [];
 
-  popupRef.value?.instance.show();
-  formRef.value?.instance.option('formData', {
-    ...taskData,
-    resourceIds,
-  });
+  const popupInstance = popupRef.value?.instance;
+  if (popupInstance) {
+    popupInstance.show();
+  }
+
+  const formInstance = formRef.value?.instance;
+  if (formInstance) {
+    formInstance.option('formData', {
+      ...taskData,
+      resourceIds,
+    });
+  }
 }
 
 function onConfirmClick() {
@@ -165,12 +194,37 @@ function onCancelClick() {
     <DxGantt
       ref="ganttRef"
       height="700px"
-      @task-edit-dialog-showing="onTaskEditDialogShowing"
+      scale-type="weeks"
+      :task-list-width="400"
+      :on-task-edit-dialog-showing="onTaskEditDialogShowing"
     >
-      <DxTasks :data-source="tasksData"/>
-      <DxDependencies :data-source="dependenciesData"/>
-      <DxResources :data-source="resourcesData"/>
-      <DxResourceAssignments :data-source="resourceAssignmentsData"/>
+      <DxTasks
+        :data-source="tasksData"
+        key-expr="id"
+        parent-id-expr="parentId"
+        title-expr="title"
+        start-expr="start"
+        end-expr="end"
+        progress-expr="progress"
+      />
+      <DxDependencies
+        :data-source="dependenciesData"
+        key-expr="id"
+        predecessor-id-expr="predecessorId"
+        successor-id-expr="successorId"
+        type-expr="type"
+      />
+      <DxResources
+        :data-source="resourcesData"
+        key-expr="id"
+        text-expr="text"
+      />
+      <DxResourceAssignments
+        :data-source="resourceAssignmentsData"
+        key-expr="id"
+        task-id-expr="taskId"
+        resource-id-expr="resourceId"
+      />
       <DxColumn
         data-field="title"
         caption="Subject"
@@ -190,8 +244,8 @@ function onCancelClick() {
     <DxPopup
       ref="popupRef"
       title="Task Details"
-      :width="400"
-      :height="450"
+      :max-width="800"
+      :max-height="500"
       :show-title="true"
       :drag-enabled="false"
       :visible="false"
@@ -200,6 +254,8 @@ function onCancelClick() {
       <DxForm
         ref="formRef"
         :items="formItems"
+        :col-count="2"
+        label-location="top"
       />
       <div class="popup-buttons">
         <button

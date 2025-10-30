@@ -90,7 +90,7 @@ $(() => {
       visible: false,
       contentTemplate(container) {
         const formContainer = $('<div>');
-        
+
         formInstance = formContainer
           .dxForm({
             labelLocation: 'top',

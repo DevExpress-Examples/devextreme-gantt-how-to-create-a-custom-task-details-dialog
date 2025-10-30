@@ -1,7 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import { DxGanttComponent } from 'devextreme-angular';
-import { DxPopupComponent } from 'devextreme-angular';
-import { DxFormComponent } from 'devextreme-angular';
+import {
+  DxGanttComponent,
+  DxPopupComponent,
+  DxFormComponent,
+} from 'devextreme-angular';
 import {
   tasks,
   resources,
@@ -17,17 +19,23 @@ import {
 })
 export class AppComponent {
   @ViewChild(DxGanttComponent, { static: false })
-  gantt!: DxGanttComponent;
+    gantt!: DxGanttComponent;
+
   @ViewChild('taskDetailsPopup', { static: false })
-  popup!: DxPopupComponent;
+    popup!: DxPopupComponent;
+
   @ViewChild('taskForm', { static: false }) form!: DxFormComponent;
 
   tasks = tasks;
+
   resources = resources;
+
   resourceAssignments = resourceAssignments;
+
   dependencies = dependencies;
 
   popupVisible = false;
+
   currentTaskData: any = {};
 
   onTaskEditDialogShowing(e: any): void {
@@ -41,12 +49,12 @@ export class AppComponent {
   }
 
   onPopupShown(): void {
-    if (this.currentTaskData && this.currentTaskData.id) {
+    if (this.currentTaskData?.id) {
       const assignedResources = this.gantt.instance.getTaskResources(
         this.currentTaskData.id,
       );
       this.currentTaskData.resources = assignedResources.map(
-        (r: any) => r.id,
+        (r: any) => r.id as number,
       );
     }
   }

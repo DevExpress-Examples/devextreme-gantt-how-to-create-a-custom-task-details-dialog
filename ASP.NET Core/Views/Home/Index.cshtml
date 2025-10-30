@@ -1,10 +1,4 @@
 @using ASP_NET_Core.Models
-@using System.Text.Json
-
-@{
-    var tasksJson = JsonSerializer.Serialize(GanttData.Tasks);
-    var resourcesJson = JsonSerializer.Serialize(GanttData.Resources);
-}
 
 <h2>Gantt - Custom Task Details Dialog</h2>
 
@@ -50,182 +44,178 @@
             .DataField("End")
             .Caption("End Date");
     })
+    .Toolbar(t => {
+        t.Items(i => {
+            i.Add().Name(GanttToolbarItem.Undo);
+            i.Add().Name(GanttToolbarItem.Redo);
+            i.Add().Name(GanttToolbarItem.Separator);
+            i.Add().Name(GanttToolbarItem.CollapseAll);
+            i.Add().Name(GanttToolbarItem.ExpandAll);
+            i.Add().Name(GanttToolbarItem.Separator);
+            i.Add().Name(GanttToolbarItem.AddTask);
+            i.Add().Name(GanttToolbarItem.DeleteTask);
+            i.Add().Name(GanttToolbarItem.Separator);
+            i.Add().Name(GanttToolbarItem.ZoomIn);
+            i.Add().Name(GanttToolbarItem.ZoomOut);
+        });
+    })
     .Editing(e => e.Enabled(true))
+    .OnInitialized("onGanttInitialized")
     .OnTaskEditDialogShowing("onTaskEditDialogShowing")
 )
 
 @(Html.DevExtreme().Popup()
     .ID("taskDetailsPopup")
-    .Width(400)
-    .Height(450)
+    .MaxWidth(800)
+    .MaxHeight(500)
     .Title("Task Details")
-    .ShowTitle(true)
-    .DragEnabled(false)
-    .Visible(false)
-    .Container("body")
-    .ContentTemplate(@<text>
-        @(Html.DevExtreme().Form()
-            .ID("taskForm")
-            .Items(items => {
-                items.AddSimple()
-                    .DataField("Title")
-                    .Label(l => l.Text("Title"))
-                    .ValidationRules(v => v.AddRequired().Message("Title is required"));
-                items.AddSimple()
-                    .DataField("Start")
-                    .Label(l => l.Text("Start Date"))
-                    .Editor(e => e.DateBox()
-                        .Type(DateBoxType.DateTime)
-                        .OnValueChanged("onStartDateChanged")
-                    );
-                items.AddSimple()
-                    .DataField("End")
-                    .Label(l => l.Text("End Date"))
-                    .Editor(e => e.DateBox()
-                        .Type(DateBoxType.DateTime)
-                        .OnValueChanged("onEndDateChanged")
-                    );
-                items.AddSimple()
-                    .DataField("Progress")
-                    .Label(l => l.Text("Progress"))
-                    .Editor(e => e.Slider()
-                        .Min(0)
-                        .Max(100)
-                        .Tooltip(t => t
-                            .Enabled(true)
-                            .Format(new JS("formatProgress"))
-                            .ShowMode(SliderTooltipShowMode.Always)
-                            .Position(VerticalEdge.Bottom)
-                        )
-                    );
-                items.AddSimple()
-                    .DataField("resourceIds")
-                    .Label(l => l.Text("Resources"))
-                    .Editor(e => e.TagBox()
-                        .DataSource(new JS("resources"))
-                        .DisplayExpr("Text")
-                        .ValueExpr("Id")
-                        .ShowSelectionControls(true)
-                        .ApplyValueMode(EditorApplyValueMode.UseButtons)
-                    );
-            })
-        )
-        <div class="popup-buttons">
-            <button class="btn btn-primary" onclick="onConfirmClick()">OK</button>
-            <button class="btn btn-secondary" onclick="onCancelClick()">Cancel</button>
-        </div>
-    </text>)
+    .ContentTemplate(new TemplateName("customPopupContentTemplate"))
+    .ToolbarItems(items => {
+        items.Add()
+            .Widget(editor => editor.Button()
+                .Text("Confirm")
+                .Type(ButtonType.Success)
+                .OnClick("onConfirmClick")
+            )
+            .Location(ToolbarItemLocation.After)
+            .Toolbar(Toolbar.Bottom);
+        items.Add()
+            .Widget(editor => editor.Button()
+                .Text("Cancel")
+                .OnClick("onCancelClick")
+            )
+            .Location(ToolbarItemLocation.After)
+            .Toolbar(Toolbar.Bottom);
+    })
+    .OnInitialized("onPopupInitialized")
+    .OnShown("onShown")
 )
 
+@using (Html.DevExtreme().NamedTemplate("customPopupContentTemplate")) {
+    @(Html.DevExtreme().Form()
+        .ID("taskForm")
+        .ColCount(2)
+        .Items(items => {
+            items.AddSimple()
+                .DataField("Title")
+                .ValidationRules(v => v.AddRequired())
+                .ColSpan(2);
+            items.AddSimple()
+                .DataField("Start")
+                .Editor(e => e.DateBox()
+                    .Type(DateBoxType.DateTime)
+                    .OnValueChanged("onStartDateChanged")
+                    .Width("100%")
+                );
+            items.AddSimple()
+                .DataField("End")
+                .Editor(e => e.DateBox()
+                    .Type(DateBoxType.DateTime)
+                    .OnValueChanged("onEndDateChanged")
+                    .Width("100%")
+                );
+            items.AddSimple()
+                .DataField("Progress")
+                .Editor(e => e.Slider()
+                    .Min(0)
+                    .Max(100)
+                    .Label(l => l
+                        .Visible(true)
+                        .Format(new JS("formatLabel"))
+                        .Position(VerticalEdge.Top)
+                    )
+                    .Tooltip(t => t
+                        .Enabled(true)
+                        .Format(new JS("formatLabel"))
+                        .Position(VerticalEdge.Top)
+                        .ShowMode(SliderTooltipShowMode.OnHover)
+                    )
+                    .Width("100%")
+                );
+            items.AddSimple()
+                .DataField("Resources")
+                .Editor(e => e.TagBox()
+                    .DataSource(GanttData.Resources)
+                    .ValueExpr("Id")
+                    .DisplayExpr("Text")
+                    .Width("100%")
+                );
+            items.AddButton()
+                .ColSpan(1)
+                .HorizontalAlignment(HorizontalAlignment.Left)
+                .ButtonOptions(options => {
+                    options.Text("Resource Manager");
+                    options.OnClick("onShowResourceManagerClick");
+                });
+        })
+        .OnInitialized("onFormInitialized")
+    )
+}
+
 <script>
-    const resources = @Html.Raw(resourcesJson);
-    let ganttInstance;
-    let popupInstance;
-    let formInstance;
+    var form, popup, gantt;
+    var rowData = {};
 
-    function onTaskEditDialogShowing(e) {
-        console.log('onTaskEditDialogShowing called', e);
-        e.cancel = true;
-        console.log('After setting cancel:', e.cancel);
-
-        if (!ganttInstance) {
-            ganttInstance = $('#gantt').dxGantt('instance');
-        }
-        if (!popupInstance) {
-            popupInstance = $('#taskDetailsPopup').dxPopup('instance');
-        }
-
-        console.log('Popup instance:', popupInstance);
-
-        const taskData = ganttInstance.getTaskData(e.key);
-        if (!taskData) {
-            return;
-        }
-
-        const taskResources = ganttInstance.getTaskResources(e.key);
-        const resourceIds = taskResources.map(r => r.id);
-
-        console.log('Showing popup with data:', taskData);
-
-        // Show popup first so the form gets rendered
-        popupInstance.show();
-
-        // Now get the form instance after popup is shown
-        formInstance = $('#taskForm').dxForm('instance');
-
-        console.log('Form instance:', formInstance);
-
-        formInstance.option('formData', {
-            ...taskData,
-            resourceIds: resourceIds
-        });
+    function onGanttInitialized(e) {
+        gantt = e.component;
     }
 
-    function onStartDateChanged(e) {
-        if (!formInstance) {
-            formInstance = $('#taskForm').dxForm('instance');
+    function onPopupInitialized(e) {
+        popup = e.component;
+    }
+
+    function onFormInitialized(e) {
+        form = e.component;
+    }
+
+    function onShown(e) {
+        var data = form.option("formData");
+        var resources = gantt.getTaskResources(data.Id);
+        form.getEditor("Resources").option("value", resources.map(r => r.id));
+    }
+
+    function onTaskEditDialogShowing(e) {
+        e.cancel = true;
+        showTaskDetails(gantt.getTaskData(e.key));
+    }
+
+    function onConfirmClick(e) {
+        let result = form.validate();
+        if (result.isValid) {
+            var data = form.option("formData");
+            gantt.updateTask(data.Id, data);
+            gantt.unassignAllResourcesFromTask(data.Id);
+            if (data.Resources && data.Resources.length > 0) {
+                data.Resources.forEach(r => gantt.assignResourceToTask(r, data.Id));
+            }
+            popup.hide();
         }
-        const startDate = e.value;
-        const endDate = formInstance.option('formData').End;
-        if (startDate && endDate && startDate > endDate) {
-            formInstance.getEditor('End').option('value', startDate);
+    }
+
+    function onShowResourceManagerClick(e) {
+        gantt.showResourceManagerDialog();
+    }
+
+    function onCancelClick(e) {
+        popup.hide();
+    }
+
+    function showTaskDetails(data) {
+        popup.option("visible", true);
+        if (form) {
+            form.option('formData', data);
         }
     }
 
     function onEndDateChanged(e) {
-        if (!formInstance) {
-            formInstance = $('#taskForm').dxForm('instance');
-        }
-        const endDate = e.value;
-        const startDate = formInstance.option('formData').Start;
-        if (startDate && endDate && endDate < startDate) {
-            formInstance.getEditor('Start').option('value', endDate);
-        }
+        form.getEditor("Start").option("max", e.value);
     }
 
-    function formatProgress(value) {
-        return value + '%';
+    function onStartDateChanged(e) {
+        form.getEditor("End").option("min", e.value);
     }
 
-    function onConfirmClick() {
-        if (!formInstance) {
-            formInstance = $('#taskForm').dxForm('instance');
-        }
-        if (!ganttInstance) {
-            ganttInstance = $('#gantt').dxGantt('instance');
-        }
-        if (!popupInstance) {
-            popupInstance = $('#taskDetailsPopup').dxPopup('instance');
-        }
-
-        const result = formInstance.validate();
-        if (!result.isValid) {
-            return;
-        }
-
-        const data = formInstance.option('formData');
-        ganttInstance.updateTask(data.Id, data);
-
-        const currentResourceIds = ganttInstance.getTaskResources(data.Id).map(r => r.id);
-        const newResourceIds = data.resourceIds || [];
-
-        const resourcesToRemove = currentResourceIds.filter(id => !newResourceIds.includes(id));
-        resourcesToRemove.forEach(resourceId => {
-            ganttInstance.unassignResourceFromTask(resourceId, data.Id);
-        });
-
-        const resourcesToAdd = newResourceIds.filter(id => !currentResourceIds.includes(id));
-        resourcesToAdd.forEach(resourceId => {
-            ganttInstance.assignResourceToTask(resourceId, data.Id);
-        });
-
-        popupInstance.hide();
-    }
-
-    function onCancelClick() {
-        if (!popupInstance) {
-            popupInstance = $('#taskDetailsPopup').dxPopup('instance');
-        }
-        popupInstance.hide();
+    function formatLabel(value) {
+        return value + "%";
     }
 </script>

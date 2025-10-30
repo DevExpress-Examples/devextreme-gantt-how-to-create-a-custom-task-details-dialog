@@ -9,6 +9,8 @@
 
 This example demonstrates how display a custom "Task details" dialog instead of the default dialog. 
 
+![Custom Task Details Dialog](images/task-details-popup.png)
+
 ## Implementation Details
 
 1. Add a popup edit form in your application.
@@ -75,10 +77,28 @@ This example demonstrates how display a custom "Task details" dialog instead of 
 
 ## Files to Review
 
-* [Index.cshtml](./CS/DevExtremeMvcApp1/Views/Home/Index.cshtml)
-* [SampleDataController.cs](./CS/DevExtremeMvcApp1/Controllers/HomeController.cs)
-* [SampleDataController.cs](./CS/DevExtremeMvcApp1/Controllers/SampleDataController.cs)
-* [GanttDataProvider.cs](./CS/DevExtremeMvcApp1/Models/GanttDataProvider.cs)
+- **Angular**
+    - [app.component.html](Angular/src/app/app.component.html)
+    - [app.component.ts](Angular/src/app/app.component.ts)
+- **React**
+    - [App.tsx](React/src/App.tsx)
+- **Vue**
+    - [HomeContent.vue](Vue/src/components/HomeContent.vue)
+- **jQuery**
+    - [index.html](jQuery/src/index.html)
+    - [index.js](jQuery/src/index.js)
+- **ASP.NET Core**
+    - [Index.cshtml](ASP.NET%20Core/Views/Home/Index.cshtml)
+
+
+## Documentation
+
+- [Gantt - Getting Started](https://js.devexpress.com/Documentation/Guide/UI_Components/Gantt/Getting_Started_with_Gantt/)
+- [Gantt - taskEditDialogShowing Event](https://js.devexpress.com/Documentation/ApiReference/UI_Components/dxGantt/Events/#taskEditDialogShowing)
+- [Gantt - updateTask Method](https://js.devexpress.com/Documentation/ApiReference/UI_Components/dxGantt/Methods/#updateTaskkey_data)
+- [Gantt - assignResourceToTask Method](https://js.devexpress.com/Documentation/ApiReference/UI_Components/dxGantt/Methods/#assignResourceToTaskresourceKey_taskKey)
+- [Gantt - unassignResourceFromTask Method](https://js.devexpress.com/Documentation/ApiReference/UI_Components/dxGantt/Methods/#unassignResourceFromTaskresourceKey_taskKey)
+
 <!-- feedback -->
 ## Does this example address your development requirements/objectives?
 

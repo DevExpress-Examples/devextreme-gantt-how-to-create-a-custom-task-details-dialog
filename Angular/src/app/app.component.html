@@ -1,9 +1,5 @@
 <div class="demo-container">
   <dx-gantt
-    [tasks]="tasks"
-    [dependencies]="dependencies"
-    [resources]="resources"
-    [resourceAssignments]="resourceAssignments"
     [scaleType]="'weeks'"
     [taskListWidth]="400"
     (onTaskEditDialogShowing)="onTaskEditDialogShowing($event)"
@@ -28,11 +24,7 @@
     >
     </dxo-dependencies>
 
-    <dxo-resources
-      [dataSource]="resources"
-      keyExpr="id"
-      textExpr="text"
-    >
+    <dxo-resources [dataSource]="resources" keyExpr="id" textExpr="text">
     </dxo-resources>
 
     <dxo-resource-assignments
@@ -44,7 +36,11 @@
     </dxo-resource-assignments>
 
     <dxi-column dataField="title" caption="Title" [width]="250"></dxi-column>
-    <dxi-column dataField="start" caption="Start Date" [width]="100"></dxi-column>
+    <dxi-column
+      dataField="start"
+      caption="Start Date"
+      [width]="100"
+    ></dxi-column>
     <dxi-column dataField="end" caption="End Date" [width]="100"></dxi-column>
 
     <dxo-toolbar>
@@ -72,28 +68,6 @@
     [(visible)]="popupVisible"
     (onShown)="onPopupShown()"
   >
-    <dxo-toolbar-item
-      widget="dxButton"
-      location="after"
-      toolbar="bottom"
-      [options]="{
-        text: 'Confirm',
-        type: 'success',
-        onClick: onConfirmClick.bind(this)
-      }"
-    >
-    </dxo-toolbar-item>
-    <dxo-toolbar-item
-      widget="dxButton"
-      location="after"
-      toolbar="bottom"
-      [options]="{
-        text: 'Cancel',
-        onClick: onCancelClick.bind(this)
-      }"
-    >
-    </dxo-toolbar-item>
-
     <div *dxTemplate="let data of 'content'">
       <dx-form
         #taskForm
@@ -102,11 +76,7 @@
         [showColonAfterLabel]="true"
         [colCount]="2"
       >
-        <dxi-item
-          dataField="title"
-          [label]="{ text: 'Title' }"
-          [colSpan]="2"
-        >
+        <dxi-item dataField="title" [label]="{ text: 'Title' }" [colSpan]="2">
           <dxi-validation-rule type="required"></dxi-validation-rule>
         </dxi-item>
 
@@ -181,6 +151,14 @@
         >
         </dxi-item>
       </dx-form>
+      <div class="popup-buttons">
+        <button class="btn btn-primary" (click)="onConfirmClick()">
+          Confirm
+        </button>
+        <button class="btn btn-secondary" (click)="onCancelClick()">
+          Cancel
+        </button>
+      </div>
     </div>
   </dx-popup>
 </div>
