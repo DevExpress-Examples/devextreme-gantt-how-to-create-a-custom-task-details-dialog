@@ -1,5 +1,5 @@
 <!-- default badges list -->
-![](https://img.shields.io/endpoint?url=https://codecentral.devexpress.com/api/v1/VersionRange/313396789/25.1.3%2B)
+![](https://img.shields.io/endpoint?url=https://codecentral.devexpress.com/api/v1/VersionRange/313396789/24.2.1%2B)
 [![](https://img.shields.io/badge/Open_in_DevExpress_Support_Center-FF7200?style=flat-square&logo=DevExpress&logoColor=white)](https://supportcenter.devexpress.com/ticket/details/T949655)
 [![](https://img.shields.io/badge/📖_How_to_use_DevExpress_Examples-e9f6fc?style=flat-square)](https://docs.devexpress.com/GeneralInformation/403183)
 [![](https://img.shields.io/badge/💬_Leave_Feedback-feecdd?style=flat-square)](#does-this-example-address-your-development-requirementsobjectives)
@@ -15,7 +15,7 @@ This example demonstrates how display a custom "Task details" dialog instead of 
 
 1. Add a popup edit form in your application.
    
-	```csharp
+```csharp
 	@(Html.DevExtreme().Popup()
 	    .ID("taskDetailsPopup").MaxWidth(800).MaxHeight(500).Title("Task Details")
 	    .ContentTemplate(new TemplateName("customPopupContentTemplate"))
@@ -39,16 +39,17 @@ This example demonstrates how display a custom "Task details" dialog instead of 
 	    })
 	    .OnInitialized("onPopupInitialized").OnShown("onShown")
 	)
- 	```
-	```jscript
+```
+
+```js
     function onPopupInitialized(e) {
         popup = e.component;
     }
- 	```
+```
 
 2. Handle the [taskEditDialogShowing](https://js.devexpress.com/jQuery/Documentation/ApiReference/UI_Components/dxGantt/Events/#taskEditDialogShowing) event to prevent the default dialog and display your custom dialog instead. Bind the form in the popup control to processed task data.
 
-	```jscript
+```js
     function onTaskEditDialogShowing(e) {
         e.cancel = true;
         showTaskDetails(gantt.getTaskData(e.key))
@@ -58,11 +59,11 @@ This example demonstrates how display a custom "Task details" dialog instead of 
         if (form)
             form.option('formData', data);
     }
-	```
+```
 
 3.  Call the [updateTask](https://js.devexpress.com/jQuery/Documentation/ApiReference/UI_Components/dxGantt/Methods/#updateTaskkey_data) and [assignResourceToTask](https://js.devexpress.com/jQuery/Documentation/ApiReference/UI_Components/dxGantt/Methods/#assignResourceToTaskresourceKey_taskKey)/[unassignResourceFromTask](https://js.devexpress.com/jQuery/Documentation/ApiReference/UI_Components/dxGantt/Methods/#unassignResourceFromTaskresourceKey_taskKey) methods to update Gantt data.
 
-	```jscript
+```js
  	function onConfirmClick(e) {
         let result = form.validate();
         if (result.isValid) {
@@ -73,7 +74,7 @@ This example demonstrates how display a custom "Task details" dialog instead of 
             popup.hide();
         }
     }
- 	```
+```
 
 ## Files to Review
 
@@ -95,7 +96,7 @@ This example demonstrates how display a custom "Task details" dialog instead of 
 
 - [Gantt - Getting Started](https://js.devexpress.com/Documentation/Guide/UI_Components/Gantt/Getting_Started_with_Gantt/)
 - [Gantt - taskEditDialogShowing Event](https://js.devexpress.com/Documentation/ApiReference/UI_Components/dxGantt/Events/#taskEditDialogShowing)
-- [Gantt - updateTask Method](https://js.devexpress.com/Documentation/ApiReference/UI_Components/dxGantt/Methods/#updateTaskkey_data)
+- [Gantt - updateTask Method](https://js.devexpress.com/jQuery/Documentation/ApiReference/UI_Components/dxGantt/Methods/#updateTaskkey_data)
 - [Gantt - assignResourceToTask Method](https://js.devexpress.com/Documentation/ApiReference/UI_Components/dxGantt/Methods/#assignResourceToTaskresourceKey_taskKey)
 - [Gantt - unassignResourceFromTask Method](https://js.devexpress.com/Documentation/ApiReference/UI_Components/dxGantt/Methods/#unassignResourceFromTaskresourceKey_taskKey)
 
