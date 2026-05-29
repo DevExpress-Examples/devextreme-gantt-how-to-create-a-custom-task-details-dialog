@@ -1,18 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import {
-  DxGanttComponent,
-  DxPopupComponent,
-  DxFormComponent,
-} from 'devextreme-angular';
-import {
-  tasks,
-  resources,
-  resourceAssignments,
-  dependencies,
-  Task,
-} from './data';
+import { DxGanttModule, DxPopupModule, DxFormModule, DxGanttComponent, DxPopupComponent, DxFormComponent } from 'devextreme-angular';
+import { tasks, resources, resourceAssignments, dependencies, Task, } from './data';
 
 @Component({
+  imports: [DxGanttModule, DxPopupModule, DxFormModule],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
