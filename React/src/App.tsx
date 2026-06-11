@@ -56,7 +56,6 @@ function App(): JSX.Element {
       const assignedResources: { id: number }[] = ganttInstance.getTaskResources(
         currentTaskData.id,
       );
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       setCurrentTaskData((prev: typeof currentTaskData) => ({
         ...prev,
         resources: assignedResources.map((r) => r.id),
