@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { DxGanttModule, DxPopupModule, DxFormModule, DxGanttComponent, DxPopupComponent, DxFormComponent } from 'devextreme-angular';
 import { tasks, resources, resourceAssignments, dependencies } from './data';
 
@@ -6,6 +6,7 @@ import { tasks, resources, resourceAssignments, dependencies } from './data';
   imports: [DxGanttModule, DxPopupModule, DxFormModule],
   selector: 'app-root',
   templateUrl: './app.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
